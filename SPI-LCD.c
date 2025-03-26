@@ -26,6 +26,7 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 #include <stdarg.h>
 #include "MMBasic_Includes.h"
 #include "Hardware_Includes.h"
+#include "hardware/dma.h"
 int CurrentSPIDevice=NONE_SPI_DEVICE;
 const struct Displays display_details[]={
 		{0,"", SDCARD_SPI_SPEED, 0, 0, 0, 0, SPI_POLARITY_LOW, SPI_PHASE_1EDGE},
@@ -56,28 +57,33 @@ const struct Displays display_details[]={
 		{25,"User", 0, 0, 0, 0, 0, 0 ,0},
 		{26,"Dummy", 0, 0, 0, 0, 0, 0 ,0},
 		{27,"Dummy", 0, 0, 0, 0, 0, 0 ,0},
-		{28,"SSD1963_4", 0, 0, 0, 0, 0, 0 ,0},
-		{29,"SSD1963_5", 0, 0, 0, 0, 0, 0 ,0},
-		{30,"SSD1963_5A", 0, 0, 0, 0, 0, 0 ,0},
-		{31,"SSD1963_7", 0, 0, 0, 0, 0, 0 ,0},
-		{32,"SSD1963_7A", 0, 0, 0, 0, 0, 0 ,0},
-		{33,"SSD1963_8", 0, 0, 0, 0, 0, 0 ,0},
-		{34,"ILI9341_8", 0, 0, 0, 0, 0, 0 ,0},
-		{35,"SSD1963_4_16", 0, 0, 0, 0, 0, 0 ,0},
-		{36,"SSD1963_5_16", 0, 0, 0, 0, 0, 0 ,0},
-		{37,"SSD1963_5A_16" , 0, 0, 0, 0, 0, 0 ,0},
-		{38,"SSD1963_7_16", 0, 0, 0, 0, 0, 0 ,0},
-		{39,"SSD1963_7A_16", 0, 0, 0, 0, 0, 0 ,0},
-		{40,"SSD1963_8_16", 0, 0, 0, 0, 0, 0 ,0},
-		{41,"ILI9341_16", 0, 0, 0, 0, 0, 0 ,0},
-		{42,"IPS_4_16", 0, 0, 0, 0, 0, 0 ,0},
-		{43,"SSD1963_5E_16", 0, 0, 0, 0, 0, 0 ,0},
-		{44,"SSD1963_7E_16", 0, 0, 0, 0, 0, 0 ,0},
-		{45,"ILI9486_16", 0, 0, 0, 0, 0, 0 ,0},
-		{46,"VIRTUAL_C", 0, 320, 240, 0, 0, 0, 0},
-		{47,"VIRTUAL_M", 0, 640, 480, 0, 0, 0, 0},
-		{48,"VS1053slow", 200000, 0, 0, 0, 0, SPI_POLARITY_LOW, SPI_PHASE_1EDGE},
-		{49,"VS1053fast", 4000000, 0, 0, 0, 0, SPI_POLARITY_LOW, SPI_PHASE_1EDGE},
+		{28,"Dummy", 0, 0, 0, 0, 0, 0 ,0},
+		{29,"Dummy", 0, 0, 0, 0, 0, 0 ,0},
+		{30,"Dummy", 0, 0, 0, 0, 0, 0 ,0},
+		{31,"Dummy", 0, 0, 0, 0, 0, 0 ,0},
+		{32,"Dummy", 0, 0, 0, 0, 0, 0 ,0},
+		{33,"SSD1963_4", 0, 0, 0, 0, 0, 0 ,0},
+		{34,"SSD1963_5", 0, 0, 0, 0, 0, 0 ,0},
+		{35,"SSD1963_5A", 0, 0, 0, 0, 0, 0 ,0},
+		{36,"SSD1963_7", 0, 0, 0, 0, 0, 0 ,0},
+		{37,"SSD1963_7A", 0, 0, 0, 0, 0, 0 ,0},
+		{38,"SSD1963_8", 0, 0, 0, 0, 0, 0 ,0},
+		{39,"ILI9341_8", 0, 0, 0, 0, 0, 0 ,0},
+		{40,"SSD1963_4_16", 0, 0, 0, 0, 0, 0 ,0},
+		{41,"SSD1963_5_16", 0, 0, 0, 0, 0, 0 ,0},
+		{42,"SSD1963_5A_16" , 0, 0, 0, 0, 0, 0 ,0},
+		{43,"SSD1963_7_16", 0, 0, 0, 0, 0, 0 ,0},
+		{44,"SSD1963_7A_16", 0, 0, 0, 0, 0, 0 ,0},
+		{45,"SSD1963_8_16", 0, 0, 0, 0, 0, 0 ,0},
+		{46,"ILI9341_16", 0, 0, 0, 0, 0, 0 ,0},
+		{47,"IPS_4_16", 0, 0, 0, 0, 0, 0 ,0},
+		{48,"SSD1963_5E_16", 0, 0, 0, 0, 0, 0 ,0},
+		{49,"SSD1963_7E_16", 0, 0, 0, 0, 0, 0 ,0},
+		{50,"ILI9486_16", 0, 0, 0, 0, 0, 0 ,0},
+		{51,"VIRTUAL_C", 0, 320, 240, 0, 0, 0, 0},
+		{52,"VIRTUAL_M", 0, 640, 480, 0, 0, 0, 0},
+		{53,"VS1053slow", 200000, 0, 0, 0, 0, SPI_POLARITY_LOW, SPI_PHASE_1EDGE},
+		{54,"VS1053fast", 4000000, 0, 0, 0, 0, SPI_POLARITY_LOW, SPI_PHASE_1EDGE},
 
 };
 void __not_in_flash_func(spi_write_fast)(spi_inst_t *spi, const uint8_t *src, size_t len) {
@@ -108,9 +114,7 @@ int LCD_CS_PIN=0;
 int LCD_CD_PIN=0;
 int LCD_Reset_PIN=0;
 
-#ifndef PICOMITEVGA
 unsigned char LCDBuffer[1440]={0};
-#endif
 
 void DefineRegionSPI(int xstart, int ystart, int xend, int yend, int rw);
 void DrawBitmapSPI(int x1, int y1, int width, int height, int scale, int fc, int bc, unsigned char *bitmap);
@@ -200,7 +204,7 @@ void MIPS16 ConfigDisplaySPI(unsigned char *p) {
 	if(!(code=codecheck(argv[6])))argv[6]+=2;
 	RESET = getinteger(argv[6]);
 	if(!code)RESET=codemap(RESET);
-	if(Option.DISPLAY_TYPE!=ST7920){
+	if(DISPLAY_TYPE!=ST7920){
 		if(!(code=codecheck(argv[8])))argv[8]+=2;
 		CS = getinteger(argv[8]);
 		if(!code)CS=codemap(CS);
@@ -225,7 +229,7 @@ void MIPS16 ConfigDisplaySPI(unsigned char *p) {
 	}
 	CheckPin(CD, CP_IGNORE_INUSE);
     CheckPin(RESET, CP_IGNORE_INUSE);
-	if(CS==CD || CS==RESET || CS==BACKLIGHT || CD==RESET || CD==BACKLIGHT || RESET==BACKLIGHT)error("Duplicated pin");
+	if(CS==CD || CS==RESET || (CS==BACKLIGHT && DISPLAY_TYPE!=ST7920) || CD==RESET || CD==BACKLIGHT || RESET==BACKLIGHT)error("Duplicated pin");
 	Option.LCD_CD = CD;
 	Option.LCD_Reset = RESET;
 	Option.DISPLAY_BL = BACKLIGHT;
@@ -238,7 +242,6 @@ void MIPS16 ConfigDisplaySPI(unsigned char *p) {
 // initialise the display controller
 // this is used in the initial boot sequence of the Micromite
 void MIPS16 InitDisplaySPI(int InitOnly) {
-
     if(Option.DISPLAY_TYPE==0 || Option.DISPLAY_TYPE >= DISP_USER || Option.DISPLAY_TYPE <= I2C_PANEL) return;
     DisplayHRes = display_details[Option.DISPLAY_TYPE].horizontal;
     DisplayVRes = display_details[Option.DISPLAY_TYPE].vertical;
@@ -273,8 +276,6 @@ void MIPS16 InitDisplaySPI(int InitOnly) {
     switch(Option.DISPLAY_TYPE) {
 		case ILI9488:
 		case ILI9488W:
-			DisplayHRes = 480;
-			DisplayVRes = 320;
 			ResetController();
 			if(Option.DISPLAY_TYPE==ILI9488){
 				spi_write_command(0xE0); // Positive Gamma Control
@@ -417,8 +418,6 @@ void MIPS16 InitDisplaySPI(int InitOnly) {
 			}
  			break;
 		case ILI9481IPS:
-			DisplayHRes = 480;
-			DisplayVRes = 320;
 			ResetController();
 			//3.5IPS ILI9481+CMI	
 			spi_write_command(0x01); //Soft_rese
@@ -828,11 +827,11 @@ void MIPS16 InitDisplaySPI(int InitOnly) {
         	break;
     }
     if(Option.DISPLAY_ORIENTATION & 1) {
-        VRes=DisplayVRes;
         HRes=DisplayHRes;
+        VRes=DisplayVRes;
     } else {
-        VRes=DisplayHRes;
         HRes=DisplayVRes;
+        VRes=DisplayHRes;
     }
     if(!InitOnly) {
     	ResetDisplay();
@@ -847,7 +846,7 @@ void MIPS16 InitDisplaySPI(int InitOnly) {
 void SetCS(void) {
 	SPISpeedSet(Option.DISPLAY_TYPE);
     if(Option.DISPLAY_TYPE != ST7920)gpio_put(LCD_CS_PIN,GPIO_PIN_RESET);  // set CS low
-    else gpio_put(LCD_CS_PIN,GPIO_PIN_SET);
+    else gpio_put(LCD_CD_PIN,GPIO_PIN_SET);
 }
 
 
@@ -1068,9 +1067,6 @@ void DefineRegionSPI(int xstart, int ystart, int xend, int yend, int rw) {
 void spisendfast(unsigned char *n, int i){
 		xmit_byte_multi(n,i);//		HAL_SPI_Transmit(&hspi3,coord,4,500);
 }
-
-
-
 // Draw a filled rectangle
 // this is the basic drawing promitive used by most drawing routines
 //    x1, y1, x2, y2 - the coordinates
@@ -1643,27 +1639,28 @@ void DisplayNotSet(void) {
 // The MX470 uses SPI channel 2 which it has exclusive control of (needed because touch can be used at any time)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+extern uint16_t SPI_CLK_PIN;
 // config the SPI port for output
 // it will not touch the port if it has already been opened
 void SPISpeedSet(int device){
     if(CurrentSPIDevice != device){
-		if(device==SDFAST || device==SDSLOW) {
+		if(device==SDSLOW || (device==SDFAST && SPI_CLK_PIN!= SD_CLK_PIN)) {
 //			MMPrintString("Slow Bitbang\r\n");
 			xchg_byte= BitBangSwapSPI;
 			xmit_byte_multi=BitBangSendSPI;
 			rcvr_byte_multi=BitBangReadSPI;
 			SET_SPI_CLK=BitBangSetClk; 
-#ifndef PICOMITEVGA
 			SET_SPI_CLK(SD_SPI_SPEED, false, false);
-		}
-		else {
+		} else {
 			if(PinDef[Option.SYSTEM_CLK].mode & SPI0SCK && PinDef[Option.SYSTEM_MOSI].mode & SPI0TX  && PinDef[Option.SYSTEM_MISO].mode & SPI0RX  ) {
 //				MMPrintString("SPI0\r\n");
 				xchg_byte= HW0SwapSPI;
 				xmit_byte_multi=HW0SendSPI;
 				rcvr_byte_multi=HW0ReadSPI;
 				SET_SPI_CLK=HW0Clk;
+                gpio_set_input_enabled(PinDef[Option.SYSTEM_CLK].GPno,false);
+                gpio_set_input_enabled(PinDef[Option.SYSTEM_MOSI].GPno,false);
+                gpio_set_input_enabled(PinDef[Option.SYSTEM_MISO].GPno,false);
 			} else if(PinDef[Option.SYSTEM_CLK].mode & SPI1SCK && PinDef[Option.SYSTEM_MOSI].mode & SPI1TX  && PinDef[Option.SYSTEM_MISO].mode & SPI1RX ){
 //				MMPrintString("SPI1\r\n");
 				xchg_byte= HW1SwapSPI;
@@ -1678,7 +1675,6 @@ void SPISpeedSet(int device){
 				SET_SPI_CLK=BitBangSetClk; 
 			}
 			SET_SPI_CLK(display_details[device].speed, display_details[device].CPOL, display_details[device].CPHASE);
-#endif
 		}
 		CurrentSPIDevice=device;
     }
